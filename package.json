@@ -1,0 +1,23 @@
+{
+  "name": "dashboard-backend",
+  "version": "1.0.0",
+  "description": "Backend For Personal Dashboard",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SupratimSarkar2001/Dashboard-Backend.git"
+  },
+  "keywords": [
+    "Javascript",
+    "Node.js"
+  ],
+  "author": "Supratim Sarkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SupratimSarkar2001/Dashboard-Backend/issues"
+  },
+  "homepage": "https://github.com/SupratimSarkar2001/Dashboard-Backend#readme"
+}
