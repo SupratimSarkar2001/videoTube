@@ -7,7 +7,6 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 const getVideoComments = asyncHandler(async (req, res) => {
  const { videoId } = req.params
  const { page = 1, limit = 10 } = req.query
- //TODO: Add pagination
 
  if (!isValidObjectId(videoId)) {
   throw new ApiError(400, "Invalid video id")
@@ -72,7 +71,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
     }
    }
   }
- ])
+ ]).skip(limit * (page - 1)).limit(limit)
 
  return res.
   status(200).
