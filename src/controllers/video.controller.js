@@ -14,8 +14,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid user id")
   }
 
-  //TODO: Pagination & Sorting
-
   //TODO: Query
 
   const videos = await Video.aggregate([
@@ -50,7 +48,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
         }
       }
     }
-  ])
+  ]).skip((page - 1) * limit).limit(limit).sort({ [sortBy]: sortType })
+
 
   return res
     .status(200)
