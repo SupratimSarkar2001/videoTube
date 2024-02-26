@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { uploadOnCloudinary, deleteFileCloudinary } from "../utils/cloudinary.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -174,7 +174,8 @@ const updateVideo = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Video not found")
   }
 
-  //TODO: Delete Old Thumbnail.
+  const oldThumbnail = video.thumbnail
+
   const thumbnailLocalPath = req.file?.path
 
   if (!thumbnailLocalPath) {
@@ -185,6 +186,10 @@ const updateVideo = asyncHandler(async (req, res) => {
 
   if (!thumbnail) {
     throw new ApiError(500, "Failed to upload thumbnail")
+  }
+
+  if (oldThumbnail) {
+    await deleteFileCloudinary(oldThumbnail)
   }
 
   const finalVideo = await Video.findByIdAndUpdate(
@@ -218,7 +223,16 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
   const video = await Video.findById(videoId)
 
-  //TODO: Delete Old Video & Thumbnail from Cloudinary
+  const oldVideo = video.videoFile
+  const oldThumbnail = video.thumbnail
+
+  if (oldVideo) {
+    await deleteFileCloudinary(oldVideo)
+  }
+
+  if (oldThumbnail) {
+    await deleteFileCloudinary(oldThumbnail)
+  }
 
   if (!video) {
     throw new ApiError(404, "Video not found")

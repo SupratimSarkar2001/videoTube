@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js"
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { deleteFileCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
@@ -274,12 +274,20 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Avatar File is missing")
     }
 
-    //TODO: delete old image from cloudinary
-
     const avatar = await uploadOnCloudinary(avatarLocalPath)
 
     if (!avatar) {
         throw new ApiError(500, "Avatar upload failed")
+    }
+
+    const oldUser = await User.findById(req.user?._id);
+
+    if (!oldUser) {
+        throw new ApiError(404, "User not found")
+    }
+
+    if (oldUser?.avatar) {
+        await deleteFileCloudinary(oldUser?.avatar)
     }
 
     const user = await User.findByIdAndUpdate(
@@ -307,13 +315,21 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     if (!coverImageLocalPath) {
         throw new ApiError(400, "Cover image file is missing")
     }
-
-    //TODO: delete old image from cloudinary
-
+    
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
     if (!coverImage.url) {
         throw new ApiError(500, "Cover image upload failed")
+    }
+
+    const oldUser = await User.findById(req.user?._id);
+
+    if (!oldUser) {
+        throw new ApiError(404, "User not found")
+    }
+
+    if (oldUser?.coverImage) {
+        await deleteFileCloudinary(oldUser?.coverImage)
     }
 
     const user = await User.findByIdAndUpdate(

@@ -27,6 +27,17 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
+const deleteFileCloudinary = async (publicId) => {
+    try {
+      if (!publicId) return "Public id not found";
+      const deleteResponse = await cloudinary.uploader.destroy(publicId, {
+        resource_type: "video",
+      });
+      return deleteResponse;
+    } catch (error) {
+      console.log("ERROR : ", error);
+      return null;
+    }
+  };
 
-
-export {uploadOnCloudinary}
+export {uploadOnCloudinary, deleteFileCloudinary}
